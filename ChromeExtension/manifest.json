@@ -1,0 +1,25 @@
+{
+	"name": "DebugR",
+	"version": "1.0",
+	"manifest_version": 2,
+	"description": "Receive debugging information alongside XMLHTTPRequests.",
+	"icons": {
+		"16": "img/icon.png",
+		"128": "img/logo.png"
+	},
+	"background": {
+		"scripts": ["js/Daemon.js"]
+	},
+	"content_scripts": [{
+		"matches": ["http://*/*", "https://*/*"],
+		"js": ["js/forwarder.js"],
+		"run_at": "document_start"
+	}],
+	"permissions": [
+		"webRequest",
+		"webRequestBlocking",
+		"tabs",
+		"http://*/*",
+		"https://*/*"
+	]
+}

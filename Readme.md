@@ -15,6 +15,13 @@ if (isset($_SERVER['HTTP_DEBUGR'])) { // Only send headers when DebugR is enable
 	header('DebugR: '.base64_encode('Hello DebugR'));
 	// Append a unique label to send multiple messages.
 	header('DebugR-log2: '.base64_encode('Moarr inforation'));
+
+	// For very large messages, you should send the message in chunks (Detected by the "--0", "--1", etc suffix).
+	// Restriction on the maximum size for a single HTTP header (Max 4Kib for nginx 8KiB for Apache)
+	$chunks = str_split(base64_encode($largeString), (4 * 1024)); //
+	foreach ($chunks as $index => $chunk) {
+		header('DebugR-largeString--'.$index.': '.$chunk);
+	}
 }
 ?>
 ```

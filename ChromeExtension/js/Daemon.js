@@ -34,11 +34,36 @@
 	Daemon.prototype.listenForDebugRHeader = function () {
 		var self = this;
 		chrome.webRequest.onHeadersReceived.addListener(function (details) {
-			for (var i = 0; i < details.responseHeaders.length; i++) {
-				var header = details.responseHeaders[i];
-				var match = header.name.match('^DebugR(-(.+))?$', 'i');
+			var debugrHeaders = {}, i, header, match, label, chunk, data;
+			for (i = 0; i < details.responseHeaders.length; i++) {
+				header = details.responseHeaders[i];
+				match = header.name.match('^DebugR(-(.+))?$', 'i');
 				if (match) {
-					self.headerReceived(atob(header.value), match[2] || '', details);
+					label = match[2] || '';
+					chunk = label.match('^(.+)--([0-9]+)$');
+					if (chunk) { // Is the header chunked?
+						if (typeof debugrHeaders[chunk[1]] == 'undefined') {
+							debugrHeaders[chunk[1]] = {};
+						}
+						debugrHeaders[chunk[1]][chunk[2]] = header.value;
+					} else {
+						debugrHeaders[label] = header.value;
+					}
+				}
+			}
+			for (label in debugrHeaders) {
+				data = debugrHeaders[label];
+				if (typeof data == "string") {
+					self.dataReceived(atob(data), label, details);
+				} else {
+					// merge chunked header
+					i = 0;
+					var value = '';
+					while (typeof data[i] !== 'undefined') {
+						value += data[i];
+						i++;
+					}
+					self.dataReceived(atob(value), label, details);
 				}
 			}
 		}, {
@@ -48,9 +73,9 @@
 	};
 
 	/**
-	 * Handle a single 'DebugR:' header.
+	 * Handle data from a 'DebugR:' header.
 	 */
-	Daemon.prototype.headerReceived = function (message, label, details) {
+	Daemon.prototype.dataReceived = function (message, label, details) {
 		var headers = {};
 		for (var i = 0; i < details.responseHeaders.length; i++) {
 			var header = details.responseHeaders[i];

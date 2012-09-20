@@ -34,7 +34,7 @@
 	Daemon.prototype.listenForDebugRHeader = function () {
 		var self = this;
 		chrome.webRequest.onHeadersReceived.addListener(function (details) {
-			var debugrHeaders = {}, i, header, match, label, chunk, data;
+			var debugrHeaders = {}, normalHeaders = [], i, header, match, label, chunk, data;
 			for (i = 0; i < details.responseHeaders.length; i++) {
 				header = details.responseHeaders[i];
 				match = header.name.match('^DebugR(-(.+))?$', 'i');
@@ -49,6 +49,8 @@
 					} else {
 						debugrHeaders[label] = header.value;
 					}
+				} else {
+					normalHeaders.push(header);
 				}
 			}
 			for (label in debugrHeaders) {
@@ -66,10 +68,13 @@
 					self.dataReceived(atob(value), label, details);
 				}
 			}
+			return {
+				responseHeaders: normalHeaders // Only pass the non-DebuR headers to the javascript XMLHttpRequest
+			};
 		}, {
 			urls: ["http://*/*", "https://*/*"],
 			types: ["xmlhttprequest"]
-		}, ['responseHeaders']);
+		}, ['blocking', 'responseHeaders']);
 	};
 
 	/**

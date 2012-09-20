@@ -14,7 +14,7 @@ if (isset($_SERVER['HTTP_DEBUGR'])) { // Only send headers when DebugR is enable
 	// Send a message alongside the request.
 	header('DebugR: '.base64_encode('Hello DebugR'));
 	// Append a unique label to send multiple messages.
-	header('DebugR-log2: '.base64_encode('Moarr inforation'));
+	header('DebugR-my-first-label: '.base64_encode('Moarr information'));
 
 	// For very large messages, you should send the message in chunks (Detected by the "--0", "--1", etc suffix).
 	// Restriction on the maximum size for a single HTTP header (Max 4Kib for nginx 8KiB for Apache)

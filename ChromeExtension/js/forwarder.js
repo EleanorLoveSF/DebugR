@@ -9,8 +9,24 @@
 	var queue = [];
 	var timer = null;
 
-	var send = function (message) {
-		window.postMessage(message, '*');
+	var send = function (data) {
+		window.postMessage(data, '*');
+		if (data.label === 'log') {
+			try {
+				console.log(JSON.parse(data.message));
+			} catch(e) {
+				console.log(data.message);
+			}
+		} else if (data.label === 'warning') {
+			console.warn('Warning: ' + data.message);
+		} else if (data.label === 'error') {
+			console.error('Error: ' + data.message);
+		} else if (data.label === 'html') {
+			var div = document.createElement('div');
+			div.className = 'debugR';
+			div.innerHTML = data.message;
+			document.getElementsByTagName('body')[0].appendChild(div)
+		}
 	};
 	chrome.extension.onMessage.addListener(function(message) {
 

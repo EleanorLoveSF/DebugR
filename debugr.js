@@ -114,7 +114,7 @@
 				match = header.name.match('^DebugR(-(.+))?$', 'i');
 				if (match) {
 					label = match[2] || '';
-					chunk = label.match('^(.+)--([0-9]+)$');
+					chunk = label.match('^(.+)\\.chunk([0-9]+)$');
 					if (chunk) { // Is the header chunked?
 						if (typeof debugrHeaders[chunk[1]] == 'undefined') {
 							debugrHeaders[chunk[1]] = {};
@@ -157,6 +157,22 @@
 			var event = document.createEvent('MessageEvent');
 			event.initMessageEvent('message', true, true, data, 'http://debugr.net/', 'unknown', window,  null);
 			window.dispatchEvent(event);
+			if (data.label === 'log') {
+				try {
+					console.log(JSON.parse(data.message));
+				} catch(e) {
+					console.log(data.message);
+				}
+			} else if (data.label === 'warning') {
+				console.warn('Warning: ' + data.message);
+			} else if (data.label === 'error') {
+				console.error('Error: ' + data.message);
+			} else if (data.label === 'html') {
+				var div = document.createElement('div');
+				div.className = 'debugR';
+				div.innerHTML = data.message;
+				document.getElementsByTagName('body')[0].appendChild(div)
+			}
 		}
 	};
 

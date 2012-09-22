@@ -40,7 +40,7 @@
 				match = header.name.match('^DebugR(-(.+))?$', 'i');
 				if (match) {
 					label = match[2] || '';
-					chunk = label.match('^(.+)--([0-9]+)$');
+					chunk = label.match('^(.+)\\.chunk([0-9]+)$');
 					if (chunk) { // Is the header chunked?
 						if (typeof debugrHeaders[chunk[1]] == 'undefined') {
 							debugrHeaders[chunk[1]] = {};
@@ -88,10 +88,17 @@
 				headers[header.name] = header.value;
 			}
 		}
+		var number = null;
+		var match = label.match('(.+)\\.([0-9]+)$');
+		if (match) {
+			number = match[2];
+			label = match[1]
+		}
 		chrome.tabs.sendMessage(details.tabId, {
 			debugR: true,
 			message: message,
 			label: label,
+			number: number,
 			url: details.url,
 			headers: headers
 		});

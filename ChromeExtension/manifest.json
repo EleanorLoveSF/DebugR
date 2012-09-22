@@ -2,7 +2,7 @@
 	"name": "DebugR",
 	"version": "1.2",
 	"manifest_version": 2,
-	"description": "Receive debugging information alongside XMLHTTPRequests.",
+	"description": "Receive debugging information alongside XMLHttpRequests.",
 	"icons": {
 		"16": "img/icon.png",
 		"128": "img/logo.png"

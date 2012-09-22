@@ -67,7 +67,7 @@
 	DebugR.Dispatcher.handlers =(typeof debugR == "undefined") ? [] : debugR;
 
 	window.addEventListener('message', DebugR.Dispatcher.handleMessage);
-	document.documentElement.setAttribute('data-debugR'); // Signal the forwarder that debugr.js is active.
+	document.documentElement.setAttribute('data-debugR', 'active'); // Signal the forwarder that debugr.js is active.
 
 	window.debugR = DebugR.Dispatcher.addHandler; // Add the debugR ready function.
 	window.debugR.push = window.debugR; // Add the asynchronous debugR  ready function.

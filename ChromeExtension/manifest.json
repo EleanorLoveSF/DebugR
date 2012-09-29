@@ -4,8 +4,8 @@
 	"manifest_version": 2,
 	"description": "Receive debugging information alongside XMLHttpRequests.",
 	"icons": {
-		"16": "img/icon.png",
-		"128": "img/logo.png"
+		"16": "img/16.png",
+		"128": "img/128.png"
 	},
 	"background": {
 		"scripts": ["js/Daemon.js"]

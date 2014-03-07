@@ -14,7 +14,7 @@
 	 */
 	Daemon.prototype.addDebugRHeader = function () {
 		chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
-			var headers = details.requestHeaders || []
+			var headers = details.requestHeaders || [];
 			headers.push({
 				name: 'DebugR',
 				value: 'Enabled'
@@ -42,7 +42,7 @@
 					label = match[2] || '';
 					chunk = label.match('^(.+)\\.chunk([0-9]+)$');
 					if (chunk) { // Is the header chunked?
-						if (typeof debugrHeaders[chunk[1]] == 'undefined') {
+						if (typeof debugrHeaders[chunk[1]] === 'undefined') {
 							debugrHeaders[chunk[1]] = {};
 						}
 						debugrHeaders[chunk[1]][chunk[2]] = header.value;
@@ -55,7 +55,7 @@
 			}
 			for (label in debugrHeaders) {
 				data = debugrHeaders[label];
-				if (typeof data == "string") {
+				if (typeof data === "string") {
 					self.dataReceived(atob(data), label, details);
 				} else {
 					// merge chunked header
@@ -69,7 +69,7 @@
 				}
 			}
 			return {
-				responseHeaders: normalHeaders // Only pass the non-DebuR headers to the javascript XMLHttpRequest
+				responseHeaders: normalHeaders // Only pass the non-DebugR headers to the javascript XMLHttpRequest
 			};
 		}, {
 			urls: ["http://*/*", "https://*/*"],
@@ -92,7 +92,7 @@
 		var match = label.match('(.+)\\.([0-9]+)$');
 		if (match) {
 			number = match[2];
-			label = match[1]
+			label = match[1];
 		}
 		chrome.tabs.sendMessage(details.tabId, {
 			debugR: true,
@@ -101,20 +101,6 @@
 			number: number,
 			url: details.url,
 			headers: headers
-		});
-	};
-
-	/**
-	 * Inject a listener in every tab.
-	 */
-	Daemon.prototype.injectCommunication = function () {
-		chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
-			if (changeInfo.status === 'loading') { // New tab?
-				chrome.tabs.executeScript(tabId, {
-					file: 'js/forwarder.js',
-					runAt: "document_start"
-				});
-			}
 		});
 	};
 

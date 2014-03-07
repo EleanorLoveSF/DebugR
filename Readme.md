@@ -2,7 +2,7 @@
 
 A method to send debugging information alongside your XMLHTTPRequest.
 
-inspired by FirePHP.
+Inspired by [FirePHP](http://www.firephp.org).
 
 ## Server
 
@@ -20,7 +20,7 @@ if (isset($_SERVER['HTTP_DEBUGR'])) { // Only send headers when DebugR is enable
 
 	// For very large messages, you should send the message in chunks (Detected by the "..chunk0", ".chunk1", etc suffix).
 	// Restriction on the maximum size for a single HTTP header (Max 4Kib for nginx 8KiB for Apache)
-	$chunks = str_split(base64_encode($largeString), (4 * 1024)); //
+	$chunks = str_split(base64_encode($largeString), 4000); //
 	foreach ($chunks as $index => $chunk) {
 		header('DebugR-largeString.chunk'.$index.': '.$chunk);
 	}
@@ -30,31 +30,15 @@ if (isset($_SERVER['HTTP_DEBUGR'])) { // Only send headers when DebugR is enable
 
 ## Client
 
-Vanilla js
+Install the [DebugR - Google Chrome extension](https://chrome.google.com/webstore/detail/debugr/odgodmleeenojpjigkkbicijhpplolmm) or include debugr.js which monkey-patches the XMLHttpRequest object.
+
+Both the Chrome extension and the debugr.js use [window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window.postMessage) to push debugr information to the page.
+
 ```js
 window.addEventListener('message', function (e) {
-	if (e.data.debugR) {
+	if (e.data.debugR && e.data.label === 'my-first-label') {) {
 		console.log(e.data);
 	}
 }, false);
 document.documentElement.setAttribute('data-debugR'); // Signal the extension that the eventlistener is active.
-
-```
-
-Using debugr.js
-```html
-<script>
-var debugR = debugR || [];
-debugR.push(function (message, details) {
-	console.log(message);
-});
-</script>
- .. other scripts and html ...
-<script>
-	(function () {
-		var el = document.createElement('script'); el.type = 'text/javascript'; el.async = true;
-		el.src = '/js/debugr.js';
-		var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(el, s);
-	})();
-</script>
 ```

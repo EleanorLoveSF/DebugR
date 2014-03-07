@@ -8,11 +8,11 @@
 		"128": "img/128.png"
 	},
 	"background": {
-		"scripts": ["js/Daemon.js"]
+		"scripts": ["js/debugr-Daemon.js"]
 	},
 	"content_scripts": [{
 		"matches": ["http://*/*", "https://*/*"],
-		"js": ["js/forwarder.js"],
+		"js": ["js/debugr-forwarder.js"],
 		"run_at": "document_start"
 	}],
 	"permissions": [
